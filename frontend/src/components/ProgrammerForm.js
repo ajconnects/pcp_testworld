@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { CFormInput, CForm, CCol, CButton, CFormCheck, CFormFeedback, CFormSelect } from '@coreui/react';
+import { useNavigate } from 'react-router-dom';
+import { CFormInput, CForm, CCol, CButton, CFormCheck, CFormFeedback, CFormSelect, CFormTextarea } from '@coreui/react';
 
 const ProgrammerForm = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -66,6 +68,7 @@ const ProgrammerForm = () => {
                 },
             });
             console.log(response.data);
+            navigate(`/programmer-profile/${response.data.id}`); // Redirect to programmer profile page
         } catch (error) {
             console.error('Error submitting form:', error);
             if (error.response) {
@@ -86,7 +89,7 @@ const ProgrammerForm = () => {
                         <CFormInput
                             type="text"
                             id="inputName"
-                            label="Name"
+                            label="Full Name"
                             name="name"
                             onChange={handleChange}
                         />
@@ -176,10 +179,11 @@ const ProgrammerForm = () => {
                         />
                     </CCol>
                     <CCol xs={12}>
-                        <CFormInput
+                        <CFormTextarea
                             id="inputBio"
                             label="Bio"
                             name="bio"
+                            rows={3}
                             placeholder="Tell us about yourself"
                             onChange={handleChange}
                         />

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { CFormInput, CForm, CCol, CButton, CFormCheck, CFormFeedback } from '@coreui/react';
+import { useNavigate } from 'react-router-dom';
+import { CFormInput, CForm, CCol, CButton, CFormCheck, CFormFeedback, CFormTextarea } from '@coreui/react';
 
 const ClientForm = () => {
     const [formData, setFormData] = useState({
@@ -12,6 +13,8 @@ const ClientForm = () => {
         bio: '',
         profile_picture: null,
     });
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({
@@ -42,7 +45,8 @@ const ClientForm = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            console.log(response.data);
+            const clientId = response.data.id; // Assuming the response contains the new client's ID
+            navigate(`/client-profile/${clientId}`); // Redirect to the profile page
         } catch (error) {
             console.error(error);
         }
@@ -57,7 +61,7 @@ const ClientForm = () => {
                     <CFormInput
                         type="text"
                         id="inputName"
-                        label="Name"
+                        label="Full Name"
                         name="name"
                         onChange={handleChange}
                     />
@@ -99,10 +103,11 @@ const ClientForm = () => {
                     />
                 </CCol>
                 <CCol xs={12}>
-                    <CFormInput
+                    <CFormTextarea
                         id="inputBio"
                         label="Bio"
                         name="bio"
+                        rows={3}
                         placeholder="Tell us about yourself"
                         onChange={handleChange}
                     />
