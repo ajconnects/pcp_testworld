@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import {
+    CCard,
+    CCardBody,
+    CCardHeader,
+    CCol,
+    CContainer,
+    CRow,
+    CButton,
+    CForm,
+    CFormLabel,
+    CFormInput,
+    CFormTextarea,
+    CSpinner,
+    CAlert
+} from '@coreui/react';
 
 const ProgrammerProfile = () => {
     const { id } = useParams(); // Retrieve programmer ID from URL params
@@ -13,7 +28,7 @@ const ProgrammerProfile = () => {
         email: '',
         phone_number: '',
         address: '',
-        experience: '',
+        experience: 0,
         sector: '',
         skills: '',
         bio: ''
@@ -57,72 +72,96 @@ const ProgrammerProfile = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(formData); // Log form data
         try {
             await axios.put(`http://127.0.0.1:8000/programmer/${id}/`, formData);
             setEditing(false);
             // Show success message or redirect to profile page
         } catch (error) {
+            console.error('Error response:', error.response.data); // Log server response
             setError(error);
         }
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error loading programmer data: {error.message}</p>;
+    if (loading) return <CSpinner color="primary" />;
+    if (error) return <CAlert color="danger">Error loading programmer data: {error.message}</CAlert>;
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <h1>Programmer Profile</h1>
-            {editing ? (
-                <form onSubmit={handleSubmit}>
-                    <label>Full Name:</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} /> <br/><br/>
-                    <label>Email:</label>
-                    <input type='email' name='email' value={formData.email} onChange={handleChange} />  <br/><br/>
-                    <label>Password:</label>
-                    <input type='password' name='password' value={formData.password} onChange={handleChange} />  <br/><br/>
-                    <label>Phone Number:</label>
-                    <input type='text' name='phone_number' value={formData.phone_number} onChange={handleChange} />  <br/><br/>
-                    <label>Address:</label>
-                    <input type='text' name='address' value={formData.address} onChange={handleChange} />  <br/><br/>
-                    <label>Experience:</label>
-                    <input type='number' name='experience' value={formData.experience} onChange={handleChange} />  <br/><br/>
-                    <label>Category:</label>
-                    <input type='categories' name='categories' value={formData.categories} onChange={handleChange} />  <br/><br/>
-                    <label>Sector:</label>
-                    <input type='sector' name='sector' value={formData.sector} onChange={handleChange} />  <br/><br/>
-                    <label>Skills:</label>
-                    <input type='skills' name='skills' value={formData.skills} onChange={handleChange} />  <br/><br/>
-                    <label>Bio:</label>
-                    <input type='textarea' name='bio' value={formData.bio} onChange={handleChange} />  <br/><br/>
-                    <button type="submit">Update</button>
-                </form>
-            ) : (
-                <div>
-                    {programmerData && (
-                        <div>
-                            {programmerData.profile_picture && (
-                                <img
-                                    src={programmerData.profile_picture}
-                                    alt="Profile"
-                                    style={{ width: '150px', height: '150px', borderRadius: '50%' }}
-                                />
+        <CContainer>
+            <CRow>
+                <CCol md="20" className="mx-auto mt-4">
+                    <CCard style={{ width: '40rem' }}>
+                        <CCardHeader>
+                            <h1>Programmer Profile</h1>
+                        </CCardHeader>
+                        <CCardBody>
+                            {editing ? (
+                                <CForm onSubmit={handleSubmit}>
+                                    <div className="mb-3">
+                                        <CFormLabel htmlFor="name">Full Name</CFormLabel>
+                                        <CFormInput type="text" id="name" name="name" value={formData.name} onChange={handleChange} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <CFormLabel htmlFor="email">Email</CFormLabel>
+                                        <CFormInput type="email" id="email" name="email" value={formData.email} onChange={handleChange} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <CFormLabel htmlFor="password">Password</CFormLabel>
+                                        <CFormInput type="password" id="password" name="password" value={formData.password} onChange={handleChange} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <CFormLabel htmlFor="phone_number">Phone Number</CFormLabel>
+                                        <CFormInput type="text" id="phone_number" name="phone_number" value={formData.phone_number} onChange={handleChange} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <CFormLabel htmlFor="address">Address</CFormLabel>
+                                        <CFormInput type="text" id="address" name="address" value={formData.address} onChange={handleChange} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <CFormLabel htmlFor="experience">Experience</CFormLabel>
+                                        <CFormInput type="number" id="experience" name="experience" value={formData.experience} onChange={handleChange} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <CFormLabel htmlFor="sector">Sector</CFormLabel>
+                                        <CFormInput type="text" id="sector" name="sector" value={formData.sector} onChange={handleChange} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <CFormLabel htmlFor="skills">Skills</CFormLabel>
+                                        <CFormInput type="text" id="skills" name="skills" value={formData.skills} onChange={handleChange} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <CFormLabel htmlFor="bio">Bio</CFormLabel>
+                                        <CFormTextarea id="bio" name="bio" value={formData.bio} onChange={handleChange} />
+                                    </div>
+                                    <CButton type="submit" color="primary">Update</CButton>
+                                </CForm>
+                            ) : (
+                                <div>
+                                    {programmerData.profile_picture && (
+                                        <img
+                                            src={programmerData.profile_picture}
+                                            alt="Profile"
+                                            style={{ width: '150px', height: '150px', borderRadius: '50%' }}
+                                        />
+                                    )}
+                                    <p><strong>Name:</strong> {programmerData.name}</p>
+                                    <p><strong>Email:</strong> {programmerData.email}</p>
+                                    <p><strong>Phone Number:</strong> {programmerData.phone_number}</p>
+                                    <p><strong>Address:</strong> {programmerData.address}</p>
+                                    <p><strong>Experience:</strong> {programmerData.experience} years</p>
+                                    <p><strong>Category:</strong> {programmerData.categories ? programmerData.categories.name : 'N/A'}</p>
+                                    <p><strong>Sector:</strong> {programmerData.sector}</p>
+                                    <p><strong>Skills:</strong> {programmerData.skills}</p>
+                                    <p><strong>Bio:</strong> {programmerData.bio}</p>
+                                    <CButton color="info" onClick={handleEdit}>Edit Profile</CButton> <br/><br/>
+                                    <CButton color="danger" onClick={handleDelete}>Delete Profile</CButton>
+                                </div>
                             )}
-                            <p><strong>Name:</strong> {programmerData.name}</p>
-                            <p><strong>Email:</strong> {programmerData.email}</p>
-                            <p><strong>Phone Number:</strong> {programmerData.phone_number}</p>
-                            <p><strong>Address:</strong> {programmerData.address}</p>
-                            <p><strong>Experience:</strong> {programmerData.experience} years</p>
-                            <p><strong>Category:</strong> {programmerData.categories ? programmerData.categories.name : 'N/A'}</p>
-                            <p><strong>Sector:</strong> {programmerData.sector}</p>
-                            <p><strong>Skills:</strong> {programmerData.skills}</p>
-                            <p><strong>Bio:</strong> {programmerData.bio}</p>
-                            <button onClick={handleEdit}>Edit Profile</button> <br/> <br/>
-                            <button onClick={handleDelete}>Delete Profile</button>
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
+                        </CCardBody>
+                    </CCard>
+                </CCol>
+            </CRow>
+        </CContainer>
     );
 };
 

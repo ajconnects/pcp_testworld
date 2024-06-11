@@ -12,8 +12,8 @@ const ProgrammerForm = () => {
         phone_number: '',
         address: '',
         experience: '',
-        categories: '',
-        sector: 'Fullstack',
+        category_id: '',
+        sector: 'AI/MachineLearning',
         skills: '',
         bio: '',
         profile_picture: null,
@@ -143,7 +143,7 @@ const ProgrammerForm = () => {
                         <CFormSelect
                             id="inputCategories"
                             label="Categories"
-                            name="categories"
+                            name="category_id"
                             onChange={handleChange}
                         >
                             <option value="">Select Category</option>
@@ -161,12 +161,12 @@ const ProgrammerForm = () => {
                             name="sector"
                             onChange={handleChange}
                         >
-                            <option value="Frontend">Frontend</option>
-                            <option value="Backend">Backend</option>
-                            <option value="Core/Deep Learning">Core/Deep Learning</option>
-                            <option value="Cloud Practitioner">Cloud Practitioner</option>
-                            <option value="Administrator">Administrator</option>
-                            <option value="Fullstack">Fullstack</option>
+                            <option value="WebDeveloper">WebDeveloper</option>
+                            <option value="BackendDeveloper">BackendDeveloper</option>
+                            <option value="Networking">Networking</option>
+                            <option value="AI/MachineLearning">AI/Machine Learning</option>
+                            <option value="CloudServices">Cloud Services</option>
+                            <option value="Admin/CustomerSupport">Administration/Customer Support</option>
                         </CFormSelect>
                     </CCol>
                     <CCol xs={12}>
