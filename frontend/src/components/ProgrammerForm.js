@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { CFormInput, CForm, CCol, CButton, CFormCheck, CFormFeedback, CFormSelect, CFormTextarea } from '@coreui/react';
+import { CFormInput, CForm, CCol, CButton, CFormCheck, CFormSelect, CFormTextarea, CFormFeedback } from '@coreui/react';
 
 const ProgrammerForm = () => {
     const navigate = useNavigate();
@@ -12,11 +12,12 @@ const ProgrammerForm = () => {
         phone_number: '',
         address: '',
         experience: '',
+        rate: '',  // New field for rate
         category_id: '',
-        sector: 'AI/MachineLearning',
         skills: '',
         bio: '',
         profile_picture: null,
+        cv: null  // New field for CV
     });
 
     const [categories, setCategories] = useState([]);
@@ -48,7 +49,7 @@ const ProgrammerForm = () => {
     const handleFileChange = (e) => {
         setFormData({
             ...formData,
-            profile_picture: e.target.files[0],
+            [e.target.name]: e.target.files[0],
         });
     };
 
@@ -67,8 +68,7 @@ const ProgrammerForm = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            console.log(response.data);
-            navigate(`/programmer-profile/${response.data.id}`); // Redirect to programmer profile page
+            navigate(`/programmer-profile/${response.data.id}`);
         } catch (error) {
             console.error('Error submitting form:', error);
             if (error.response) {
@@ -140,6 +140,17 @@ const ProgrammerForm = () => {
                         />
                     </CCol>
                     <CCol md={6}>
+                        <CFormInput
+                            type="number"
+                            id="inputRate"
+                            label="Rate"
+                            name="rate"
+                            onChange={handleChange}
+                            min={1}  // Minimum value for rate
+                            max={10} // Maximum value for rate
+                        />
+                    </CCol>
+                    <CCol md={12}>
                         <CFormSelect
                             id="inputCategories"
                             label="Categories"
@@ -154,27 +165,12 @@ const ProgrammerForm = () => {
                             ))}
                         </CFormSelect>
                     </CCol>
-                    <CCol md={12}>
-                        <CFormSelect
-                            id="inputSector"
-                            label="Sector"
-                            name="sector"
-                            onChange={handleChange}
-                        >
-                            <option value="WebDeveloper">WebDeveloper</option>
-                            <option value="BackendDeveloper">BackendDeveloper</option>
-                            <option value="Networking">Networking</option>
-                            <option value="AI/MachineLearning">AI/Machine Learning</option>
-                            <option value="CloudServices">Cloud Services</option>
-                            <option value="Admin/CustomerSupport">Administration/Customer Support</option>
-                        </CFormSelect>
-                    </CCol>
                     <CCol xs={12}>
                         <CFormInput
                             id="inputSkills"
                             label="Skills"
                             name="skills"
-                            placeholder="List your skills"
+                            placeholder="e.g Python/Django"
                             onChange={handleChange}
                         />
                     </CCol>
@@ -193,6 +189,14 @@ const ProgrammerForm = () => {
                         <input
                             type="file"
                             name="profile_picture"
+                            onChange={handleFileChange}
+                        />
+                    </CCol>
+                    <CCol xs={12}>
+                        <label>CV:</label>
+                        <input
+                            type="file"
+                            name="cv"
                             onChange={handleFileChange}
                         />
                     </CCol>

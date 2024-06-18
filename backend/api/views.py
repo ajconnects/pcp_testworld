@@ -1,8 +1,13 @@
-from django.shortcuts import render
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from .models import *
-from .serializer import *
+from .serializers import *
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+
 
 class ProgrammerViewSet(viewsets.ModelViewSet):
     queryset = Programmer.objects.all()
@@ -26,15 +31,16 @@ class ProgrammerViewSet(viewsets.ModelViewSet):
             phone_number=data.get('phone_number', None),
             address=data.get('address', None),
             experience=data['experience'],
+            rate=data['rate'],
             categories=category,
-            sector=data['sector'],
             skills=data['skills'],
             bio=data['bio'],
-            profile_picture=data.get('profile_picture', None)
+            profile_picture=data.get('profile_picture', None),
+            cv=data.get('cv', None)
         )
 
+        # Create the specific category-based model
         category_name = category.name.lower()
-
         if category_name == 'webdeveloper':
             WebDeveloper.objects.create(programmer=programmer)
         elif category_name == 'backenddeveloper':
@@ -45,7 +51,7 @@ class ProgrammerViewSet(viewsets.ModelViewSet):
             MachineLearning.objects.create(programmer=programmer)
         elif category_name == 'cloudservices':
             CloudServices.objects.create(programmer=programmer)
-        elif category_name == 'admin/customersupport':
+        elif category_name == 'admincustomersupport':
             AdminCustomerSupport.objects.create(programmer=programmer)
 
         return Response(ProgrammerSerializer(programmer).data, status=status.HTTP_201_CREATED)
@@ -57,3 +63,27 @@ class ClientViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+class RegisterProgrammerView(generics.CreateAPIView):
+    queryset = Programmer.objects.all()
+    serializer_class = ProgrammerSerializer
+
+class RegisterClientView(generics.CreateAPIView):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+
+class ObtainTokenPairWithEmailView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+class LogoutAndBlacklistRefreshTokenForUserView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh_token"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
