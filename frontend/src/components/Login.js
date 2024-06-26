@@ -18,12 +18,17 @@ const Login = () => {
         },
       });
 
-      localStorage.setItem('access_token', response.data.token);
+      localStorage.setItem('access_token', response.data.jwt);
 
-      if (response.data.user_type === 'programmer') {
-        navigate(`/programmer-profile/${response.data.user_id}`);
-      } else if (response.data.user_type === 'client') {
-        navigate(`/client-profile/${response.data.user_id}`);
+      const userType = response.data.user_type;
+      const userId = response.data.user_id;
+
+      console.log('User ID:', userId); // Debugging
+
+      if (userType === 'programmer') {
+        navigate(`/programmer-profile/${userId}`);
+      } else if (userType === 'client') {
+        navigate(`/client-profile/${userId}`);
       }
     } catch (err) {
       setError('Invalid email or password');
@@ -51,10 +56,10 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <CButton type="submit" color="primary">Login</CButton>
+            <CButton type="submit" className="custom-button">Login</CButton>
           </CForm>
           <p className="mt-3">
-            Don't have an account? <Link to="/select-user-type">Register here</Link>
+            Don't have an account? <Link to="/select-user-type" className="custom-link">Register here</Link>
           </p>
         </CCol>
       </CRow>

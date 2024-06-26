@@ -1,11 +1,16 @@
-from django.urls import path
-from rest_framework_simplejwt.views import TokenRefreshView
-from .views import RegisterProgrammerView, RegisterClientView, LogoutAndBlacklistRefreshTokenForUserView, ObtainTokenPairWithEmailView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import *
+
+router = DefaultRouter()
+router.register(r'categories', CategoryViewSet)
+router.register(r'programmers', ProgrammerViewSet, basename='programmer')
+router.register(r'clients', ClientViewSet, basename='client')
 
 urlpatterns = [
-    path('register/programmer/', RegisterProgrammerView.as_view(), name='register_programmer'),
-    path('register/client/', RegisterClientView.as_view(), name='register_client'),
-    path('login/', ObtainTokenPairWithEmailView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('logout/blacklist/', LogoutAndBlacklistRefreshTokenForUserView.as_view(), name='blacklist'),
+    path("", include(router.urls)),
+    path('login/', LoginView.as_view(), name='login'),
+    path('user/', UserView.as_view(), name='user'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('public-search/', PublicProgrammerSearchView.as_view(), name='public-programmer-search'),
 ]

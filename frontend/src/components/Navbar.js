@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   CNavbar,
   CContainer,
@@ -10,76 +11,130 @@ import {
   CDropdownToggle,
   CDropdownMenu,
   CDropdownItem,
-  CButton,
-  CForm,
-  CFormInput
+  CButton
 } from '@coreui/react';
-import { Link, useNavigate } from 'react-router-dom';
-import MultilevelDropdown from 'react-multilevel-dropdown';
+import Search from './search';
+import '../App.css';
+import { Link } from 'react-router-dom';
 
-function Navbar({ visible, setVisible }) {
-  const items = [
-    {
-      title: 'Our Team',
-      submenu: [
-        { title: 'Sami' },
-        { title: 'Aj' },
-        { title: 'Paula' }
-      ]
-    },
-    {
-      title: 'Our Product',
-      submenu: [
-        { title: 'Find Work' },
-        { title: 'Why P.C.P' },
-        { title: 'News' }
-      ]
-    }
-  ];
+const menuItems = [
+  {
+    title: "Our Team",
+    submenu: [
+      {
+        title: "Sami",
+        description: "El Jefe, Backend and Frontend"
+      },
+      {
+        title: "Aj",
+        description: "Master in API"
+      },
+      {
+        title: "Paula",
+        description: "Only frontend"
+      }
+    ]
+  },
+  {
+    title: "Our Product",
+    submenu: [
+      {
+        title: "Find Work"
+      },
+      {
+        title: "Why P.C.P"
+      },
+      {
+        title: "News"
+      }
+    ]
+  }
+];
 
-  const [signupDropdownOpen, setSignupDropdownOpen] = useState(false);
+const Navbar = ({ visible, setVisible }) => {
   const navigate = useNavigate();
+  const [teamDropdownOpen, setTeamDropdownOpen] = useState(false);
+  const [productDropdownOpen, setProductDropdownOpen] = useState(false);
+  const [selectedTeamMember, setSelectedTeamMember] = useState(null);
 
-  const toggleSignupDropdown = () => {
-    setSignupDropdownOpen(!signupDropdownOpen);
+  const handleTeamMemberHover = (index) => {
+    setSelectedTeamMember(index);
   };
 
   return (
     <CNavbar expand="lg" className="bg-body-tertiary">
       <CContainer fluid>
-        <CNavbarBrand href="#">
-          <img src="/static/d.png" alt="" style={{ maxHeight: '80px' }} />
+        <CNavbarBrand>
+        <Link to="/">
+          <img src="/static/d.png" alt="" style={{ maxHeight: '100px' }} />
+          </Link>
         </CNavbarBrand>
         <CNavbarToggler onClick={() => setVisible(!visible)} />
         <CCollapse className="navbar-collapse" visible={visible}>
           <CNavbarNav>
-            {items.map((item, index) => (
-              <MultilevelDropdown
-                key={index}
-                title={item.title}
-                items={item.submenu}
-              />
-            ))}
-          </CNavbarNav>
-          <CNavbarNav className="ms-auto">
-            <CForm className="d-flex me-3">
-              <CFormInput type="search" placeholder="Search" />
-              <CButton type="submit" color="success" variant="outline" className="ms-2">
-                Search
-              </CButton>
-            </CForm>
-            <CDropdown isOpen={signupDropdownOpen} toggle={toggleSignupDropdown}>
-              <CDropdownToggle color="secondary">Sign up</CDropdownToggle>
-              <CDropdownMenu>
-                <CDropdownItem>
-                  <Link to="/register-programmer">Programmers</Link>
-                </CDropdownItem>
-                <CDropdownItem>
-                  <Link to="/register-client">Clients</Link>
-                </CDropdownItem>
+            <CDropdown
+              isOpen={teamDropdownOpen}
+              toggle={() => setTeamDropdownOpen(!teamDropdownOpen)}
+              onMouseEnter={() => setTeamDropdownOpen(true)}
+              onMouseLeave={() => setTeamDropdownOpen(false)}
+            >
+              <CDropdownToggle nav caret className="dropdown-toggle">
+                Our Team
+              </CDropdownToggle>
+              <CDropdownMenu className="team-dropdown-menu">
+                {menuItems[0].submenu.map((member, index) => (
+                  <CDropdownItem
+                    key={index}
+                    onMouseEnter={() => handleTeamMemberHover(index)}
+                  >
+                    <div className="dropdown-item-content">
+                      <div className="member-title">
+                        {member.title}
+                      </div>
+                      {selectedTeamMember === index && (
+                        <div className="member-description">
+                          {member.description}
+                        </div>
+                      )}
+                    </div>
+                  </CDropdownItem>
+                ))}
               </CDropdownMenu>
             </CDropdown>
-            <CButton color="primary" className="me-2" onClick={() => navigate('/login')}>
+            <CDropdown
+              isOpen={productDropdownOpen}
+              toggle={() => setProductDropdownOpen(!productDropdownOpen)}
+              onMouseEnter={() => setProductDropdownOpen(true)}
+              onMouseLeave={() => setProductDropdownOpen(false)}
+            >
+              <CDropdownToggle nav caret className="dropdown-toggle">
+                Our Product
+              </CDropdownToggle>
+              <CDropdownMenu className="product-dropdown-menu">
+                {menuItems[1].submenu.map((product, index) => (
+                  <CDropdownItem key={index}>
+                    <div className="dropdown-item-content">
+                      <div className="product-title">
+                        {product.title}
+                      </div>
+                    </div>
+                  </CDropdownItem>
+                ))}
+              </CDropdownMenu>
+            </CDropdown>
+          </CNavbarNav>
+          <CNavbarNav className="ms-auto">
+            <Search />
+          </CNavbarNav>
+          <CNavbarNav className="ms-auto">
+            <CDropdown>
+              <CDropdownToggle color="secondary">Sign up</CDropdownToggle>
+              <CDropdownMenu>
+                <CDropdownItem onClick={() => navigate('/register-programmer')}>Programmer</CDropdownItem>
+                <CDropdownItem onClick={() => navigate('/register-client')}>Client</CDropdownItem>
+              </CDropdownMenu>
+            </CDropdown>
+            <CButton style={{ backgroundColor: '#1d899a', color: 'white'}} className="me-2" onClick={() => navigate('/login')}>
               Login
             </CButton>
           </CNavbarNav>
@@ -87,6 +142,6 @@ function Navbar({ visible, setVisible }) {
       </CContainer>
     </CNavbar>
   );
-}
+};
 
 export default Navbar;

@@ -56,14 +56,33 @@ const ProgrammerForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const form = new FormData();
-        for (let key in formData) {
-            if (formData[key] !== null) {
-                form.append(key, formData[key]);
-            }
+
+        // Append user data individually
+        form.append('user.name', formData.name);
+        form.append('user.email', formData.email);
+        form.append('user.password', formData.password);
+
+        // Append other form data
+        form.append('phone_number', formData.phone_number);
+        form.append('address', formData.address);
+        form.append('experience', formData.experience);
+        form.append('rate', formData.rate);
+        form.append('category_id', formData.category_id);
+        form.append('skills', formData.skills);
+        form.append('bio', formData.bio);
+
+        // Append profile picture if it exists
+        if (formData.profile_picture) {
+            form.append('profile_picture', formData.profile_picture);
+        }
+
+        // Append CV if it exists
+        if (formData.cv) {
+            form.append('cv', formData.cv);
         }
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/programmer/', form, {
+            const response = await axios.post('http://127.0.0.1:8000/programmers/', form, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -146,8 +165,8 @@ const ProgrammerForm = () => {
                             label="Rate"
                             name="rate"
                             onChange={handleChange}
-                            min={1}  // Minimum value for rate
-                            max={10} // Maximum value for rate
+                            min={10}  // Minimum value for rate
+                            max={100} // Maximum value for rate
                         />
                     </CCol>
                     <CCol md={12}>
@@ -210,7 +229,7 @@ const ProgrammerForm = () => {
                         <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
                     </CCol>
                     <CCol xs={12}>
-                        <CButton color="primary" type="submit">Submit form</CButton>
+                        <CButton style={{ backgroundColor: '#1d899a', color: 'white'}} type="submit">Submit form</CButton>
                     </CCol>
                 </CForm>
             )}

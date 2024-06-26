@@ -33,22 +33,39 @@ const ClientForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const form = new FormData();
-        for (let key in formData) {
-            if (formData[key] !== null) {
-                form.append(key, formData[key]);
-            }
+
+        // Append user data individually
+        form.append('user.name', formData.name);
+        form.append('user.email', formData.email);
+        form.append('user.password', formData.password);
+
+        // Append other form data
+        form.append('phone_number', formData.phone_number);
+        form.append('address', formData.address);
+        form.append('bio', formData.bio);
+
+        // Append profile picture if it exists
+        if (formData.profile_picture) {
+            form.append('profile_picture', formData.profile_picture);
         }
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/client/', form, {
+            const response = await axios.post('http://127.0.0.1:8000/clients/', form, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
+
             const clientId = response.data.id; // Assuming the response contains the new client's ID
-            navigate(`/client-profile/${clientId}`); // Redirect to the profile page
+
+            // Verify clientId is not undefined before navigating
+            if (clientId) {
+                navigate(`/client-profile/${clientId}`); // Redirect to the profile page
+            } else {
+                console.error('Client ID is undefined:', response.data);
+            }
         } catch (error) {
-            console.error(error);
+            console.error('Error submitting form:', error.response.data); // Log detailed error message
         }
     };
 
@@ -130,7 +147,7 @@ const ClientForm = () => {
                     <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
                 </CCol>
                 <CCol xs={12}>
-                    <CButton color="primary" type="submit">Submit form</CButton>
+                    <CButton style={{ backgroundColor: '#1d899a', color: 'white' }} type="submit">Submit form</CButton>
                 </CCol>
             </CForm>
         </div>
