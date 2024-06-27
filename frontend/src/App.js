@@ -18,6 +18,7 @@ import ClientForm from './components/ClientForm';
 import ClientProfile from './components/ClientProfile';
 import ProgrammerProfile from './components/ProgrammerProfile';
 import Login from './components/Login';
+import { AuthProvider } from './components/AuthContext';
 import UserTypeSelection from './components/UserTypeSelection';
 import Footer from './components/footer'; // Import the footer
 
@@ -25,6 +26,7 @@ function App() {
   const [visible, setVisible] = useState(false);
 
   return (
+    <AuthProvider>
     <Router>
       <div className="d-flex flex-column min-vh-100"> {/* Updated class names */}
         <Navbar visible={visible} setVisible={setVisible} />
@@ -47,6 +49,7 @@ function App() {
         <Footer /> {/* Footer is here */}
       </div>
     </Router>
+    </AuthProvider>
   );
 }
 

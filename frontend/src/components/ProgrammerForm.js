@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { CFormInput, CForm, CCol, CButton, CFormCheck, CFormSelect, CFormTextarea, CFormFeedback } from '@coreui/react';
+import { AuthContext } from './AuthContext';
 
 const ProgrammerForm = () => {
     const navigate = useNavigate();
@@ -12,14 +13,15 @@ const ProgrammerForm = () => {
         phone_number: '',
         address: '',
         experience: '',
-        rate: '',  // New field for rate
+        rate: '',
         category_id: '',
         skills: '',
         bio: '',
         profile_picture: null,
-        cv: null  // New field for CV
+        cv: null
     });
 
+    const { login } = useContext(AuthContext);
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -87,7 +89,20 @@ const ProgrammerForm = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            navigate(`/programmer-profile/${response.data.id}`);
+
+            const programmerId = response.data.id; // Assuming the response contains the new programmer's ID
+
+            // Verify programmerId is not undefined before navigating
+            if (programmerId) {
+                localStorage.setItem('access_token', response.data.jwt);
+                localStorage.setItem('user_type', 'programmer');
+                localStorage.setItem('user_id', programmerId);
+
+                login('programmer', programmerId);
+                navigate(`/programmer-profile/${programmerId}`); // Redirect to the profile page
+            } else {
+                console.error('Programmer ID is undefined:', response.data);
+            }
         } catch (error) {
             console.error('Error submitting form:', error);
             if (error.response) {

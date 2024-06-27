@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CNavbar,
@@ -16,6 +16,7 @@ import {
 import Search from './search';
 import '../App.css';
 import { Link } from 'react-router-dom';
+import { AuthContext } from './AuthContext';
 
 const menuItems = [
   {
@@ -56,17 +57,31 @@ const Navbar = ({ visible, setVisible }) => {
   const [teamDropdownOpen, setTeamDropdownOpen] = useState(false);
   const [productDropdownOpen, setProductDropdownOpen] = useState(false);
   const [selectedTeamMember, setSelectedTeamMember] = useState(null);
+  const { isLoggedIn, userType, userId, logout } = useContext(AuthContext);
 
   const handleTeamMemberHover = (index) => {
     setSelectedTeamMember(index);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const handleProfileClick = () => {
+    if (userType === 'programmer') {
+      navigate(`/programmer-profile/${userId}`);
+    } else if (userType === 'client') {
+      navigate(`/client-profile/${userId}`);
+    }
   };
 
   return (
     <CNavbar expand="lg" className="bg-body-tertiary">
       <CContainer fluid>
         <CNavbarBrand>
-        <Link to="/">
-          <img src="/static/d.png" alt="" style={{ maxHeight: '100px' }} />
+          <Link to="/">
+            <img src="/static/d.png" alt="" style={{ maxHeight: '80px', border: '2px solid #167D8F', borderRadius: '50%' }} />
           </Link>
         </CNavbarBrand>
         <CNavbarToggler onClick={() => setVisible(!visible)} />
@@ -127,16 +142,31 @@ const Navbar = ({ visible, setVisible }) => {
             <Search />
           </CNavbarNav>
           <CNavbarNav className="ms-auto">
-            <CDropdown>
-              <CDropdownToggle color="secondary">Sign up</CDropdownToggle>
-              <CDropdownMenu>
-                <CDropdownItem onClick={() => navigate('/register-programmer')}>Programmer</CDropdownItem>
-                <CDropdownItem onClick={() => navigate('/register-client')}>Client</CDropdownItem>
-              </CDropdownMenu>
-            </CDropdown>
-            <CButton style={{ backgroundColor: '#1d899a', color: 'white'}} className="me-2" onClick={() => navigate('/login')}>
-              Login
-            </CButton>
+            {isLoggedIn ? (
+              <>
+                <CButton style={{ backgroundColor: '#10A674', color: 'white', marginRight: '10px' }}
+                onClick={handleProfileClick}>
+                  My Profile
+                </CButton>
+                <CButton style={{ backgroundColor: '#f44336', color: 'white' }}
+                onClick={handleLogout}>
+                  Logout
+                </CButton>
+              </>
+            ) : (
+              <>
+                <CDropdown>
+                  <CDropdownToggle color="secondary">Sign up</CDropdownToggle>
+                  <CDropdownMenu>
+                    <CDropdownItem onClick={() => navigate('/register-programmer')}>Programmer</CDropdownItem>
+                    <CDropdownItem onClick={() => navigate('/register-client')}>Client</CDropdownItem>
+                  </CDropdownMenu>
+                </CDropdown>
+                <CButton style={{ backgroundColor: '#1d899a', color: 'white' }} className="me-2" onClick={() => navigate('/login')}>
+                  Login
+                </CButton>
+              </>
+            )}
           </CNavbarNav>
         </CCollapse>
       </CContainer>

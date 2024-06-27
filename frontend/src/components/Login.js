@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { CForm, CFormInput, CButton, CContainer, CRow, CCol } from '@coreui/react';
+import { AuthContext } from './AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,11 +21,13 @@ const Login = () => {
       });
 
       localStorage.setItem('access_token', response.data.jwt);
+      localStorage.setItem('user_type', response.data.user_type);
+      localStorage.setItem('user_id', response.data.user_id);
 
       const userType = response.data.user_type;
       const userId = response.data.user_id;
 
-      console.log('User ID:', userId); // Debugging
+      login(userType, userId);
 
       if (userType === 'programmer') {
         navigate(`/programmer-profile/${userId}`);

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { CFormInput, CForm, CCol, CButton, CFormCheck, CFormFeedback, CFormTextarea } from '@coreui/react';
+import { AuthContext } from './AuthContext';
 
 const ClientForm = () => {
     const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ const ClientForm = () => {
     });
 
     const navigate = useNavigate();
+    const { login } = useContext(AuthContext);
 
     const handleChange = (e) => {
         setFormData({
@@ -60,6 +62,11 @@ const ClientForm = () => {
 
             // Verify clientId is not undefined before navigating
             if (clientId) {
+                localStorage.setItem('access_token', response.data.jwt);
+                localStorage.setItem('user_type', 'client');
+                localStorage.setItem('user_id', clientId);
+
+                login('client', clientId);
                 navigate(`/client-profile/${clientId}`); // Redirect to the profile page
             } else {
                 console.error('Client ID is undefined:', response.data);

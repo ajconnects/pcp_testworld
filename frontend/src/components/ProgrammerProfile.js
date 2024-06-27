@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { CSpinner, CAlert, CButton } from '@coreui/react';
 import './ProgrammerProfile.css';
 import EditProgrammerProfile from './EditProgrammerProfile';
+import FeatureButton from './FeatureButton';
 
 const ProgrammerProfile = () => {
   const { id } = useParams();
@@ -163,7 +164,8 @@ const ProgrammerProfile = () => {
               <div className="profile-buttons">
                 <CButton color="info" onClick={handleEdit} className="me-2">Edit Profile</CButton>
                 <CButton color="danger" onClick={handleDelete}>Delete Profile</CButton>
-                <CButton color="primary" href="#">Leave a message </CButton>
+                <FeatureButton />
+                {/* <CButton color="primary" href="#">Leave a message </CButton> */}
               </div>
             </div>
           </>

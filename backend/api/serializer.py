@@ -111,10 +111,10 @@ class PublicProgrammerSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'skills', 'categories', 'profile_picture']
 
     def get_profile_picture(self, obj):
-        print(f"Object in get_profile_picture: {obj}")  # Debugging line
-        if obj.profile_picture:
-            print(f"Profile picture URL: {settings.MEDIA_URL}{obj.profile_picture.name}")  # Debugging line
-            return f"{settings.MEDIA_URL}{obj.profile_picture.name}"
+        #print(f"Object in get_profile_picture: {type(obj)}")  # Debugging line
+        if obj.profile_picture.name:
+            #print(f"Profile picture URL: {settings.MEDIA_URL}{obj.profile_picture.name}")  # Debugging line
+            return f"http://127.0.0.1:8000/{settings.MEDIA_URL}{obj.profile_picture.name}"
         return static('programmer_pictures/default_image.jpg')
 
 class FrontEndDeveloperSerializer(serializers.ModelSerializer):
