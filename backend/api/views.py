@@ -7,7 +7,7 @@ from .models import *
 from .serializer import *
 import jwt, datetime
 from django.contrib.auth import authenticate
-from django.core.mail import send_mail
+#from django.core.mail import send_mail
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
